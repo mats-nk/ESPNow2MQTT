@@ -1,7 +1,3 @@
-
-
-
-
 # python 3.6
 
 import random
@@ -14,16 +10,18 @@ from paho.mqtt import client as mqtt_client
 ser = serial.Serial('/dev/ttyUSB0', 115200)
 
 
-# generate client ID with pub prefix randomly
+# Generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
-broker = '10.45.50.103'
+broker = 'YOUR MQTT BROKER IP'
 port = 1883
 
 ID = "987123987"
-topic = "python/" + ID
+topic = "YOUR TOPIC" + "/" + ID
 
 #client_id = 'thebroker'
+# User name
 username = 'admin'
+# Password
 password = 'passwd'
 
 def connect_mqtt():
@@ -39,11 +37,8 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
-
 def publish(client):
     while True:
-
-
 
         data = (ser.readline().decode('ascii')) #split('\r\n')
 #    data.reset_input_buffer()
@@ -77,11 +72,9 @@ def run():
 if __name__ == '__main__':
     run()
 
-
 #client = mqtt.Client("mqtt-test") # client ID "mqtt-test"
 #client.on_connect = on_connect
 #client.on_message = on_message
 #client.username_pw_set("admin", "passwd")
 #client.connect('127.0.0.1', 1883)
 #client.loop_forever()  # Start networking daemon
-
