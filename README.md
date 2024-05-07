@@ -5,10 +5,11 @@ This repository contains 3 program for sending data (sensor.ino) and a ESP-NOW b
 
 ## Arduino
 
-ESPNOW_Serial.ino - ESP-NOW to Serial program
+`sensor.ino` - ESP-NOW Sensor program
 
-sensor.ino - ESP-NOW SSensor program
+`ESPNOW_Serial.ino` - ESP-NOW to Serial program
+
 
 ## Python Broker
 
-s2m.py - Serial to MQTT broker program
+`s2m.py` - Serial to MQTT broker program
