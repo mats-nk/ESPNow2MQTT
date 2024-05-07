@@ -1,9 +1,7 @@
+//#define DEBUG_FLAG            // Incomment to show debug info
 
-
-//#define DEBUG_FLAG            // uncomment to show debug info
-
-#define SDS18B20    // pick one
-//#define SDHT22    // pick one
+#define SDS18B20    // Select one of these two sensors
+//#define SDHT22
 
 #include <ESP8266WiFi.h>
 #include <espnow.h>
@@ -15,32 +13,29 @@
 #include <DallasTemperature.h>
 #endif
 
-
-#define sensorType 1 // 1 = sensor 2 = switch
-#define MESH_ID 6734922
+#define sensorType     1    // 1 = sensor 2 = switch
+#define MESH_ID        6734922
 #define GROUP_SWITCH   1
 #define GROUP_HT       2
-
 
 #define   donePin      4
 #define   sensorPin    5
 #define   ledPin       2
 
-byte      espnow_attemps = 3;
-uint8_t   receiverAddress[]      = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC};
-unsigned long     start_time;
-bool      ack_received;
-
+byte                   espnow_attemps = 3;
+uint8_t                receiverAddress[]      = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC};  // MAC 12 34 56 78 9A BC
+unsigned long          start_time;
+bool                   ack_received;
 
 typedef struct struct_message {
-  int     mesh_id;
-  uint8_t sensor_id[6];
-  int  type;
-  float   state;
-  float   temperature;
-  float   humidity;
-  float   moisture;
-  float   battery;
+  int      mesh_id;
+  uint8_t  sensor_id[6];
+  int      type;
+  float    state;
+  float    temperature;
+  float    humidity;
+  float    moisture;
+  float    battery;
 } struct_message;
 
 struct_message msg;
@@ -55,7 +50,6 @@ DallasTemperature sensors(&oneWire);
 
 
 void setup() {
-
 //  digitalWrite(donePin, HIGH);
 //  pinMode(donePin, OUTPUT);
 
@@ -85,17 +79,15 @@ void setup() {
   esp_now_add_peer(receiverAddress, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
   esp_now_register_send_cb(OnDataSent);
   sendReading();
-
 }
 
 
 void loop() {
-
   if ( ack_received == true)   gotoSleep();
 }
 
-void sendReading() {
 
+void sendReading() {
   msg.mesh_id = MESH_ID;
   //msg.category =  GROUP_HT;
   WiFi.macAddress(msg.sensor_id);
@@ -113,26 +105,25 @@ void sendReading() {
 #ifdef Soil
   msg.moisture =  analogRead(A0);
   if ( moistureMin < msg.moisture  ) {
-    moistureMin = msg.moisture; // Record the lowest value
+    moistureMin = msg.moisture;   // Record the lowest value
   }
   if ( msg.moisture <  moistureMax ) {
-    moistureMax = msg.moisture; // Record the lowest value
+    moistureMax = msg.moisture;   // Record the lowest value
   }
   msg.type = (sensorType);
 #endif
 
-
-  //msg.battery = 0;   // using 3.3M & 1M voltage divider
+  //msg.battery = 0;              // Using 3.3M & 1M voltage divider
   esp_now_send(receiverAddress, (uint8_t *) &msg, sizeof(msg));
 }
 
-void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
 
+void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
   ack_received = true;
 }
 
-void gotoSleep() {
 
+void gotoSleep() {
   delay(60000);
   ESP.reset();
   //ESP.deepSleep(0);
